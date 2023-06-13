@@ -89,6 +89,18 @@
              to_relation=target_relation) %}
     {#-- Process schema changes. Returns dict of changes if successful. Use source columns for upserting/merging --#}
     {% set dest_columns = process_schema_changes(on_schema_change, temp_relation, existing_relation) %}
+    
+    {#-- Added debug code by Hemanth --#}
+    {% set schema_change_message %}
+       config_on_schema_change value: {{ on_schema_change }}
+       Source : {{ temp_relation }}
+       Source Coloumns : {{ adapter.get_columns_in_relation(temp_relation) }}
+       Target : {{ existing_relation }}
+       Target Coloumns : {{ adapter.get_columns_in_relation(existing_relation) }}
+    {% endset %}
+    {% do log(schema_change_message) %}
+    {#-- End of debug code by Hemanth --#}
+    
     {% if not dest_columns %}
       {% set dest_columns = adapter.get_columns_in_relation(existing_relation) %}
     {% endif %}
